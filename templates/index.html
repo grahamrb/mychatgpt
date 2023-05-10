@@ -101,14 +101,11 @@
                 socket.emit('close_room', {room: $('#close_room').val()});
                 return false;
             });*/
-            //$('form#disconnect').submit(function (event) {
             $('form#disconnect').on('submit', function (event) {
                 socket.emit('disconnect_request');
                 return false;
             });
-            //$('form#chat').submit(function (event) {
             $('form#chat').on('submit', function (event) {
-                //$('#chat-content').append('<article class="message is-primary" style="width:70%"><div class="message-body">' + msg.data + '</div></article>');
 
                 $('#chat-content').append('<article class="message is-info" style="width:70%; margin-left: auto;"><div class="message-body" style="border-width: 0 4px 0 0">' + $('#chat_message').val() + '</div></article>');
 
@@ -197,19 +194,6 @@
 
         <article class="message is-dark">
             <div class="message-body" style="max-height:500px; overflow: auto; overflow-x:hidden; overflow-y:auto">
-
-                <!--<article class="message is-primary" style="width:70%">
-                    <div class="message-body">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    </div>
-                </article>
-
-                <article class="message is-info" style="width:70%;margin-left: auto;">
-                    <div class="message-body" style="border-width: 0 4px 0 0">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    </div>
-                </article>-->
-
                 <div id="chat-content"></div>
                 <div id="log"></div>
             </div>

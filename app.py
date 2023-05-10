@@ -24,27 +24,10 @@ base_prompt = {"role": "system", "content": "You are a helpful assistant, your n
 async_mode = None
 
 app = Flask(__name__)
-#app.config['SECRET_KEY'] = 'secret!'
 app.config['SECRET_KEY'] = os.urandom(24).hex()
 socketio = SocketIO(app, async_mode=async_mode)
 thread = None
 thread_lock = Lock()
-
-
-# response = openai.ChatCompletion.create(
-#     #engine="gpt-35-turbo",
-#     engine = deployment_name,
-#     messages=[
-#         {"role": "system", "content": "You are a helpful assistant."},
-#         {"role": "user", "content": "Does Azure OpenAI support customer managed keys?"},
-#         {"role": "assistant", "content": "Yes, customer managed keys are supported by Azure OpenAI."},
-#         {"role": "user", "content": "Do other Azure Cognitive Services support this too?"}
-#     ]
-# )
-#
-# print(response)
-# print(response['choices'][0]['message']['content'])
-
 
 def background_thread():
     """Example of how to send server generated events to clients."""
@@ -59,57 +42,6 @@ def background_thread():
 @app.route('/')
 def index():
     return render_template('index.html', async_mode=socketio.async_mode)
-
-
-# @socketio.event
-# def my_event(message):
-#     session['receive_count'] = session.get('receive_count', 0) + 1
-#     emit('my_response',
-#          {'data': message['data'], 'count': session['receive_count']})
-#
-#
-# @socketio.event
-# def my_broadcast_event(message):
-#     session['receive_count'] = session.get('receive_count', 0) + 1
-#     emit('my_response',
-#          {'data': message['data'], 'count': session['receive_count']},
-#          broadcast=True)
-#
-#
-# @socketio.event
-# def join(message):
-#     join_room(message['room'])
-#     session['receive_count'] = session.get('receive_count', 0) + 1
-#     emit('my_response',
-#          {'data': 'In rooms: ' + ', '.join(rooms()),
-#           'count': session['receive_count']})
-#
-#
-# @socketio.event
-# def leave(message):
-#     leave_room(message['room'])
-#     session['receive_count'] = session.get('receive_count', 0) + 1
-#     emit('my_response',
-#          {'data': 'In rooms: ' + ', '.join(rooms()),
-#           'count': session['receive_count']})
-#
-#
-# @socketio.on('close_room')
-# def on_close_room(message):
-#     session['receive_count'] = session.get('receive_count', 0) + 1
-#     emit('my_response', {'data': 'Room ' + message['room'] + ' is closing.',
-#                          'count': session['receive_count']},
-#          to=message['room'])
-#     close_room(message['room'])
-#
-#
-# @socketio.event
-# def my_room_event(message):
-#     session['receive_count'] = session.get('receive_count', 0) + 1
-#     emit('my_response',
-#          {'data': message['data'], 'count': session['receive_count']},
-#          to=message['room'])
-
 
 @socketio.event
 def disconnect_request():
@@ -147,7 +79,6 @@ def test_disconnect():
 
 @socketio.event
 def chat(message):
-    #join_room(message['room'])
     session['receive_count'] = session.get('receive_count', 0) + 1
     if 'messages' not in session:
         session['messages'] = []
@@ -161,13 +92,9 @@ def chat(message):
         messages=session['messages']
     )
 
-    print(response)
-    print(response['choices'][0]['message']['content'])
+    #print(response)
+    #print(response['choices'][0]['message']['content'])
     session['messages'].append({"role": "assistant", "content": response['choices'][0]['message']['content']})
-
-    # emit('my_response',
-    #      {'data': 'In rooms: ' + ', '.join(rooms()) + ' --- ' + response['choices'][0]['message']['content'],
-    #       'count': session['receive_count']})
 
     emit('my_response',
          {'data': response['choices'][0]['message']['content'], 'isControl': False,
